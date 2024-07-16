@@ -1,0 +1,74 @@
+# Systemowe pliki i katalogi
+.DS_Store
+Thumbs.db
+
+# Pliki i katalogi generowane przez Pythona
+*.py[cod]
+*.pyo
+__pycache__/
+*.so
+
+# Pliki wirtualnego środowiska
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Pliki konfiguracyjne edytorów i IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Pliki związane z bazą danych SQLite
+*.sqlite3
+
+# Pliki tymczasowe
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.pid
+*.gz
+*.log
+*.coverage
+.coverage.*
+.cache
+.pytest_cache/
+.tox/
+.dist/
+.eggs/
+*.egg-info/
+.eggs-info/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Pliki konfiguracyjne PyCharm
+.idea/
+
+# Pliki konfiguracyjne IntelliJ IDEA
+*.iml
+
+# Sekretne pliki i klucze
+.env
+.env.*
+
+# Pliki migracji baz danych (opcjonalnie, jeśli chcesz je ignorować)
+migrations/
+
+# Przykłady plików związanych z testami
+test_db.sqlite3
+test_reports/
+
+# Ignorowanie plików i katalogów tworzonych przez OS
+*.swp
+*~
+
+# Node modules (jeśli używasz Node.js)
+node_modules/
+
+# Yarn (jeśli używasz Yarn)
+.yarn/
+.pnp.*
