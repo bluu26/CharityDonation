@@ -2,13 +2,15 @@ from django.db.models import Sum
 from django.shortcuts import render
 from django.views import View
 
-from DonationCore.models import Donation
+from DonationCore.models import Donation, Institution
 
 
 class LandingPageView(View):
     def get(self, request):
         total_quantity = Donation.objects.aggregate(total=Sum('quantity'))['total']
-        return render(request, 'index.html', {'total_quantity': total_quantity})
+        institutions_number = Institution.objects.count()
+        return render(request, 'index.html', {'total_quantity': total_quantity,
+                                              'institutions_number': institutions_number})
 
 
 class RegisterPageView(View):
