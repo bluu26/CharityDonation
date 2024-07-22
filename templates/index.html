@@ -80,7 +80,7 @@
         <p>W naszej bazie znajdziesz listę zweryfikowanych Fundacji, z którymi współpracujemy. Możesz sprawdzić czym się zajmują, komu pomagają i czego potrzebują.</p>
 
         <ul class="help--slides-items">
-            {% for institution in institutions %}
+            {% for institution in page_obj %}
                 {% if institution.type == '1' %}
             <li>
 
@@ -97,6 +97,23 @@
                     {% endif %}
                 {% endfor %}
         </ul>
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1#help">&laquo; Pierwsza</a>
+                    <a href="?page={{ page_obj.previous_page_number }}#help">Poprzednia</a>
+                {% endif %}
+        
+                <span class="current">
+                    Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}.
+                </span>
+        
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}#help">Następna</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}#help">Ostatnia &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
 
     <!-- SLIDE 2 -->
@@ -122,6 +139,23 @@
                     {% endif %}
                 {% endfor %}
         </ul>
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1#help">&laquo; Pierwsza</a>
+                    <a href="?page={{ page_obj.previous_page_number }}#help">Poprzednia</a>
+                {% endif %}
+        
+                <span class="current">
+                    Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}.
+                </span>
+        
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}#help">Następna</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}#help">Ostatnia &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
 
     <!-- SLIDE 3 -->
@@ -144,7 +178,7 @@
             </li>
                     {% endif %}
                 {% endfor %}
-        </ul>
+        </ul>     
     </div>
 </section>
     
