@@ -49,16 +49,17 @@ class LoginPageView(View):
         return render(request, 'login.html')
 
     def post(self, request):
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
 
-        user = authenticate(email=email, password=password)
+        user = authenticate(username=email, password=password)
         if user is not None:
-            redirect_url = request.GET.get('next', 'home')
             login(request, user)
+            redirect_url = request.GET.get('next', 'home')
+
             return redirect(redirect_url)
         else:
-            return render(request, 'login.html', {'error': "Nie ma takiego użytkownika"})
+            return render(request, 'register.html', {'error': "Nie ma takiego użytkownika"})
 
 class AddDonationPageView(View):
     def get(self, request):
