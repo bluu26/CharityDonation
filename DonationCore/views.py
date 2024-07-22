@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Sum
@@ -17,10 +17,20 @@ class LandingPageView(View):
         paginator = Paginator(institutions, 5)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        return render(request, 'index.html', {'total_quantity': total_quantity,
-                                              'institutions_number': institutions_number,
-                                              'institutions': institutions,
-                                              'page_obj': page_obj})
+        user = request.user
+
+        if request.user.is_authenticated:
+            return render(request, 'form.html', {'total_quantity': total_quantity,
+                                                 'institutions_number': institutions_number,
+                                                 'institutions': institutions,
+                                                 'page_obj': page_obj})
+
+        else:
+            return render(request, 'index.html', {'total_quantity': total_quantity,
+                                                  'institutions_number': institutions_number,
+                                                  'institutions': institutions,
+                                                  'page_obj': page_obj,
+                                                  'user': user})
 
 
 class RegisterPageView(View):
@@ -61,6 +71,13 @@ class LoginPageView(View):
         else:
             return render(request, 'register.html', {'error': "Nie ma takiego użytkownika"})
 
-class AddDonationPageView(View):
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('home')
+
+
+class DonationPageView(View):
     def get(self, request):
         return render(request, 'form.html')

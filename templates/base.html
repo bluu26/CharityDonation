@@ -18,11 +18,12 @@
             </ul>
 
             <ul>
-                <li><a href="{% url 'home' %}">Start</a></li>
-                <li><a href="{% url 'home' %}#stats">O co chodzi?</a></li>
-                <li><a href="{% url 'home' %}#about-us">O nas</a></li>
-                <li><a href="{% url 'home' %}#help">Fundacje i organizacje</a></li>
-                <li><a href="{% url 'home' %}#contact">Kontakt</a></li>
+              <li><a href="{% url 'home' %}" class="btn btn--without-border active">Start</a></li>
+              <li><a href="{% url 'home' %}#steps" class="btn btn--without-border">O co chodzi?</a></li>
+              <li><a href="{% url 'home' %}#about-us" class="btn btn--without-border">O nas</a></li>
+              <li><a href="{% url 'home' %}#help" class="btn btn--without-border">Fundacje i organizacje</a></li>
+              <li><a href="{% url 'donation' %}" class="btn btn--without-border">Przekaż dary</a></li>
+              <li><a href="{% url 'home' %}#contact" class="btn btn--without-border">Kontakt</a></li>
             </ul>
         </nav>
     </header>
