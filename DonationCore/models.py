@@ -17,7 +17,7 @@ class Institution(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     type = models.CharField(choices=institutions, default=1, max_length=100)
-    categories = models.ManyToManyField(Category)
+    categories = models.ManyToManyField(Category, default=None)
 
 
 class Donation(models.Model):
