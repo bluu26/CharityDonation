@@ -87,24 +87,24 @@
           <!-- STEP 1: class .active is switching steps -->
           <div data-step="1" class="active">
             <h3>Zaznacz, co chcesz oddać:</h3>
-              
+
             {% for category in categories %}
                 <div class="form-group form-group--checkbox">
                   <label>
                     <input
                       type="checkbox"
                       name="categories"
-                      value="clothes-to-use"
+                      value="{{ category.id }}"
                     />
                     <span class="checkbox"></span>
                     <span class="description"
                       >{{ category.name }}</span
                     >
                   </label>
-                    
+
                 </div>
             {% endfor %}
-          
+
             <div class="form-group form-group--buttons">
               <button type="button" class="btn next-step">Dalej</button>
             </div>
@@ -129,13 +129,18 @@
 
 
 
-          <!-- STEP 4 -->
+          <!-- STEP 3 -->
           <div data-step="3">
             <h3>Wybierz organizacje, której chcesz pomóc:</h3>
             {% for institution in institutions %}
-            <div class="form-group form-group--checkbox">
+            <div class="form-group form-group--checkbox" data-categories="
+                {% for category in institution.categories.all %}
+                    {{ category.id }}
+                        {% if not forloop.last %},
+                        {% endif %}
+                {% endfor %}">
               <label>
-                <input type="radio" name="organization" value="old" />
+                <input type="radio" name="organization" value="{{ institution.id }}" />
                 <span class="checkbox radio"></span>
                 <span class="description">
                   <div class="title">{{ institution.name }}</div>
@@ -147,7 +152,7 @@
             </div>
             {% endfor %}
             <div class="form-group form-group--checkbox">
-              
+
             </div>
 
             <div class="form-group form-group--buttons">
@@ -300,5 +305,44 @@
     </footer>
 
     <script src="{% static 'js/app.js' %}"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const checkboxes = document.querySelectorAll('input[name="categories"]');
+  const institutionDivs = document.querySelectorAll('.form-group[data-categories]');
+
+  function filterInstitutions() {
+    // Pobieranie zaznaczonych kategorii
+    const selectedCategories = Array.from(checkboxes)
+      .filter(checkbox => checkbox.checked)
+      .map(checkbox => checkbox.value);
+
+    console.log('Selected categories:', selectedCategories);
+
+    // Filtrowanie instytucji
+    institutionDivs.forEach(div => {
+      // Pobieranie kategorii z data-categories
+      const categories = div.dataset.categories.split(',').map(cat => cat.trim());
+      console.log('Institution categories:', categories);
+
+      // Sprawdzanie widoczności
+      const isVisible = selectedCategories.length === 0 || categories.some(category => selectedCategories.includes(category));
+      console.log('Is visible:', isVisible);
+      div.style.display = isVisible ? 'block' : 'none';
+    });
+  }
+
+  // Nasłuchiwanie zmian w checkboxach
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', filterInstitutions);
+  });
+
+  // Inicjalizowanie filtra przy załadowaniu strony
+  filterInstitutions();
+});
+
+
+
+
+    </script>
   </body>
 </html>
