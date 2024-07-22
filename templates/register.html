@@ -7,12 +7,16 @@
 {% block content %}
     <section class="login-page">
       <h2>Załóż konto</h2>
-      <form>
+        {% if error %}
+            <h1>{{ error }}</h1>
+        {% endif %}
+      <form method="POST">
+          {% csrf_token %}
         <div class="form-group">
-          <input type="text" name="name" placeholder="Imię" />
+          <input type="text" name="first_name" placeholder="Imię" />
         </div>
          <div class="form-group">
-          <input type="text" name="surname" placeholder="Nazwisko" />
+          <input type="text" name="last_name" placeholder="Nazwisko" />
         </div>
         <div class="form-group">
           <input type="email" name="email" placeholder="Email" />
