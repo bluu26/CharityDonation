@@ -80,4 +80,6 @@ class LogoutView(View):
 
 class DonationPageView(View):
     def get(self, request):
-        return render(request, 'form.html')
+        categories = Category.objects.all()
+        institutions = Institution.objects.all()
+        return render(request, 'form.html', {'categories': categories, 'institutions': institutions})
