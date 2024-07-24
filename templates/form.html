@@ -84,6 +84,7 @@
         <div class="form--steps-counter">Krok <span>1</span>/5</div>
 
         <form action="form-confirmation.html" method="post">
+        {% csrf_token %}
           <!-- STEP 1: class .active is switching steps -->
           <div data-step="1" class="active">
             <h3>Zaznacz, co chcesz oddać:</h3>
@@ -310,6 +311,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   let stepData = {
     bags: 0,
+    categories: [], // Dodajemy kategorie
     institution: '',
     address: {
       street: '',
@@ -331,9 +333,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const stepNumber = parseInt(currentStep.dataset.step);
 
       // Zbieranie danych w zależności od kroku
-      if (stepNumber === 2) {
+      if (stepNumber === 1) { // Krok 1 - Kategorie
+        stepData.categories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
+          .map(checkbox => checkbox.value);
+      } else if (stepNumber === 2) { // Krok 2 - Worki
         stepData.bags = document.querySelector('input[name="bags"]').value;
-      } else if (stepNumber === 3) {
+      } else if (stepNumber === 3) { // Krok 3 - Instytucje
         const selectedInstitution = document.querySelector('input[name="organization"]:checked');
         if (selectedInstitution) {
           const titleElement = selectedInstitution.parentElement.querySelector('.title');
@@ -341,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stepData.institution = titleElement.innerText;
           }
         }
-      } else if (stepNumber === 4) {
+      } else if (stepNumber === 4) { // Krok 4 - Adres
         stepData.address.street = document.querySelector('input[name="street"]').value;
         stepData.address.city = document.querySelector('input[name="city"]').value;
         stepData.address.zipCode = document.querySelector('input[name="zipCode"]').value;
@@ -387,6 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
 </script>
 
 

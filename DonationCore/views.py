@@ -1,7 +1,10 @@
+import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Sum
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -83,3 +86,30 @@ class DonationPageView(View):
         categories = Category.objects.all()
         institutions = Institution.objects.all()
         return render(request, 'form.html', {'categories': categories, 'institutions': institutions})
+
+    def post(self, request):
+        data = json.loads(request.body)
+
+        categories = Category.objects.filter(id__in=data['categories'])
+        institution = Institution.objects.filter(id__in=data['institutions'])
+
+        donation = Donation(
+            quantity=data['bags'],
+            institution=institution,
+            address=data['address']['street'],
+            phone_number=data['address']['number'],
+            city=data['address']['city'],
+            zip_code=data['address']['zipCode'],
+            pick_up_date=data['address']['date'],
+            pick_up_time=data['address']['time'],
+            pick_up_comment=data['address']['comments'],
+        )
+        donation.save()
+        donation.categories.set(categories)
+
+        return redirect('confirm')
+
+
+class DonationConfirmationPageView(View):
+    def get(self, request):
+        return render(request, 'form-confirmation.html')
