@@ -83,190 +83,150 @@
       <div class="form--steps-container">
         <div class="form--steps-counter">Krok <span>1</span>/5</div>
 
-        <form action="form-confirmation.html" method="post">
-        {% csrf_token %}
-          <!-- STEP 1: class .active is switching steps -->
-          <div data-step="1" class="active">
-            <h3>Zaznacz, co chcesz oddać:</h3>
-
-            {% for category in categories %}
-                <div class="form-group form-group--checkbox">
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="categories"
-                      value="{{ category.id }}"
-                    />
+<form id="donation-form" method="POST">
+    {% csrf_token %}
+    
+    <!-- STEP 1 -->
+    <div data-step="1" class="active">
+        <h3>Zaznacz, co chcesz oddać:</h3>
+        {% for category in categories %}
+            <div class="form-group form-group--checkbox">
+                <label>
+                    <input type="checkbox" name="categories" value="{{ category.id }}" />
                     <span class="checkbox"></span>
-                    <span class="description"
-                      >{{ category.name }}</span
-                    >
-                  </label>
-
-                </div>
-            {% endfor %}
-
-            <div class="form-group form-group--buttons">
-              <button type="button" class="btn next-step">Dalej</button>
+                    <span class="description">{{ category.name }}</span>
+                </label>
             </div>
-          </div>
-
-          <!-- STEP 2 -->
-          <div data-step="2">
-            <h3>Podaj liczbę 60l worków, w które spakowałeś/aś rzeczy:</h3>
-
-            <div class="form-group form-group--inline">
-              <label>
+        {% endfor %}
+        <div class="form-group form-group--buttons">
+            <button type="button" class="btn next-step">Dalej</button>
+        </div>
+    </div>
+    
+    <!-- STEP 2 -->
+    <div data-step="2">
+        <h3>Podaj liczbę 60l worków, w które spakowałeś/aś rzeczy:</h3>
+        <div class="form-group form-group--inline">
+            <label>
                 Liczba 60l worków:
                 <input type="number" name="bags" step="1" min="1" />
-              </label>
-            </div>
-
-            <div class="form-group form-group--buttons">
-              <button type="button" class="btn prev-step">Wstecz</button>
-              <button type="button" class="btn next-step">Dalej</button>
-            </div>
-          </div>
-
-
-
-          <!-- STEP 3 -->
-          <div data-step="3">
-            <h3>Wybierz organizacje, której chcesz pomóc:</h3>
-            {% for institution in institutions %}
+            </label>
+        </div>
+        <div class="form-group form-group--buttons">
+            <button type="button" class="btn prev-step">Wstecz</button>
+            <button type="button" class="btn next-step">Dalej</button>
+        </div>
+    </div>
+    
+    <!-- STEP 3 -->
+    <div data-step="3">
+        <h3>Wybierz organizacje, której chcesz pomóc:</h3>
+        {% for institution in institutions %}
             <div class="form-group form-group--checkbox" data-categories="
                 {% for category in institution.categories.all %}
                     {{ category.id }}
-                        {% if not forloop.last %},
-                        {% endif %}
+                    {% if not forloop.last %}, {% endif %}
                 {% endfor %}">
-              <label>
-                <input type="radio" name="organization" value="{{ institution.id }}" />
-                <span class="checkbox radio"></span>
-                <span class="description">
-                  <div class="title">{{ institution.name }}</div>
-                  <div class="subtitle">
-                    {{ institution.description }}
-                  </div>
-                </span>
-              </label>
+                <label>
+                    <input type="radio" name="organization" value="{{ institution.id }}" />
+                    <span class="checkbox radio"></span>
+                    <span class="description">
+                        <div class="title">{{ institution.name }}</div>
+                        <div class="subtitle">{{ institution.description }}</div>
+                    </span>
+                </label>
             </div>
-            {% endfor %}
-            <div class="form-group form-group--checkbox">
-
-            </div>
-
-            <div class="form-group form-group--buttons">
-              <button type="button" class="btn prev-step">Wstecz</button>
-              <button type="button" class="btn next-step">Dalej</button>
-            </div>
-          </div>
-
-          <!-- STEP 4 -->
-          <div data-step="4">
-            <h3>Podaj adres oraz termin odbioru rzecz przez kuriera:</h3>
-
-            <div class="form-section form-section--columns">
-              <div class="form-section--column">
+        {% endfor %}
+        <div class="form-group form-group--checkbox"></div>
+        <div class="form-group form-group--buttons">
+            <button type="button" class="btn prev-step">Wstecz</button>
+            <button type="button" class="btn next-step">Dalej</button>
+        </div>
+    </div>
+    
+    <!-- STEP 4 -->
+    <div data-step="4">
+        <h3>Podaj adres oraz termin odbioru rzeczy przez kuriera:</h3>
+        <div class="form-section form-section--columns">
+            <div class="form-section--column">
                 <h4>Adres odbioru</h4>
                 <div class="form-group form-group--inline">
-                  <label> Ulica <input type="text" name="street" /> </label>
+                    <label> Ulica <input type="text" name="street" /> </label>
                 </div>
-
                 <div class="form-group form-group--inline">
-                  <label> Miasto <input type="text" name="city" /> </label>
+                    <label> Miasto <input type="text" name="city" /> </label>
                 </div>
-
                 <div class="form-group form-group--inline">
-                  <label>
-                    Kod pocztowy <input type="text" name="zipCode" />
-                  </label>
+                    <label> Kod pocztowy <input type="text" name="zipCode" /> </label>
                 </div>
-
                 <div class="form-group form-group--inline">
-                  <label>
-                    Numer telefonu <input type="phone" name="phone" />
-                  </label>
+                    <label> Numer telefonu <input type="tel" name="phone" /> </label>
                 </div>
-              </div>
-
-              <div class="form-section--column">
+            </div>
+            <div class="form-section--column">
                 <h4>Termin odbioru</h4>
                 <div class="form-group form-group--inline">
-                  <label> Data <input type="date" name="date" /> </label>
+                    <label> Data <input type="date" name="date" /> </label>
                 </div>
-
                 <div class="form-group form-group--inline">
-                  <label> Godzina <input type="time" name="time" /> </label>
+                    <label> Godzina <input type="time" name="time" /> </label>
                 </div>
-
                 <div class="form-group form-group--inline">
-                  <label>
-                    Uwagi dla kuriera
-                    <textarea name="comments" rows="5"></textarea>
-                  </label>
+                    <label> Uwagi dla kuriera <textarea name="comments" rows="5"></textarea> </label>
                 </div>
-              </div>
             </div>
-            <div class="form-group form-group--buttons">
-              <button type="button" class="btn prev-step">Wstecz</button>
-              <button type="button" class="btn next-step">Dalej</button>
-            </div>
-          </div>
-
-        <!-- STEP 5 -->
-        <div data-step="5">
-          <h3>Podsumowanie Twojej darowizny</h3>
-        
-          <div class="summary">
+        </div>
+        <div class="form-group form-group--buttons">
+            <button type="button" class="btn prev-step">Wstecz</button>
+            <button type="button" class="btn next-step">Dalej</button>
+        </div>
+    </div>
+    
+    <!-- STEP 5 -->
+    <div data-step="5">
+        <h3>Podsumowanie Twojej darowizny</h3>
+        <div class="summary">
             <div class="form-section">
-              <h4>Oddajesz:</h4>
-              <ul>
-                <li>
-                  <span class="icon icon-bag"></span>
-                  <span id="summary-bags" class="summary--text"></span>
-                </li>
-                <li>
-                  <span class="icon icon-hand"></span>
-                  <span id="summary-institution" class="summary--text"></span>
-                </li>
-              </ul>
+                <h4>Oddajesz:</h4>
+                <ul>
+                    <li>
+                        <span class="icon icon-bag"></span>
+                        <span id="summary-bags" class="summary--text"></span>
+                    </li>
+                    <li>
+                        <span class="icon icon-hand"></span>
+                        <span id="summary-institution" class="summary--text"></span>
+                    </li>
+                </ul>
             </div>
-        
             <div class="form-section form-section--columns">
-              <div class="form-section--column">
-                <h4>Adres odbioru:</h4>
-                <ul>
-                  <li id="summary-street"></li>
-                  <li id="summary-city"></li>
-                  <li id="summary-zipCode"></li>
-                  <li id="summary-phone"></li>
-                </ul>
-              </div>
-        
-              <div class="form-section--column">
-                <h4>Termin odbioru:</h4>
-                <ul>
-                  <li id="summary-date"></li>
-                  <li id="summary-time"></li>
-                  <li id="summary-comments"></li>
-                </ul>
-              </div>
+                <div class="form-section--column">
+                    <h4>Adres odbioru:</h4>
+                    <ul>
+                        <li id="summary-street"></li>
+                        <li id="summary-city"></li>
+                        <li id="summary-zipCode"></li>
+                        <li id="summary-phone"></li>
+                    </ul>
+                </div>
+                <div class="form-section--column">
+                    <h4>Termin odbioru:</h4>
+                    <ul>
+                        <li id="summary-date"></li>
+                        <li id="summary-time"></li>
+                        <li id="summary-comments"></li>
+                    </ul>
+                </div>
             </div>
-          </div>
-        
-          <div class="form-group form-group--buttons">
+        </div>
+        <div class="form-group form-group--buttons">
             <button type="button" class="btn prev-step">Wstecz</button>
             <button type="submit" class="btn">Zatwierdź</button>
-          </div>
         </div>
+    </div>
+</form>
 
-            <div class="form-group form-group--buttons">
-              <button type="button" class="btn prev-step">Wstecz</button>
-              <button type="submit" class="btn">Potwierdzam</button>
-            </div>
-          </div>
-        </form>
+
       </div>
     </section>
 
@@ -311,7 +271,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   let stepData = {
     bags: 0,
-    categories: [], // Dodajemy kategorie
+    categories: [],
     institution: '',
     address: {
       street: '',
@@ -326,6 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const nextButtons = document.querySelectorAll('.next-step');
   const prevButtons = document.querySelectorAll('.prev-step');
+  const form = document.getElementById('donation-form');
 
   nextButtons.forEach(button => {
     button.addEventListener('click', () => {
@@ -356,13 +317,6 @@ document.addEventListener('DOMContentLoaded', () => {
         stepData.address.comments = document.querySelector('textarea[name="comments"]').value;
       }
 
-      // Przejście do następnego kroku
-      currentStep.classList.remove('active');
-      const nextStep = document.querySelector(`[data-step="${stepNumber + 1}"]`);
-      if (nextStep) {
-        nextStep.classList.add('active');
-      }
-
       // Wyświetlanie podsumowania w kroku 5
       if (stepNumber === 4) {
         document.getElementById('summary-bags').innerText = `${stepData.bags} worki ubrań w dobrym stanie dla dzieci`;
@@ -375,6 +329,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('summary-time').innerText = stepData.address.time;
         document.getElementById('summary-comments').innerText = stepData.address.comments || 'Brak uwag';
       }
+
+      showStep(stepNumber + 1);
     });
   });
 
@@ -383,17 +339,49 @@ document.addEventListener('DOMContentLoaded', () => {
       const currentStep = button.closest('[data-step]');
       const stepNumber = parseInt(currentStep.dataset.step);
 
-      // Przejście do poprzedniego kroku
-      currentStep.classList.remove('active');
-      const prevStep = document.querySelector(`[data-step="${stepNumber - 1}"]`);
-      if (prevStep) {
-        prevStep.classList.add('active');
-      }
+      showStep(stepNumber - 1);
     });
   });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    console.log('Submitting form with data:', stepData); // Dodajemy logowanie danych
+
+    fetch('{% url "donation" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: JSON.stringify(stepData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        alert('Donation created successfully!');
+        form.reset();
+        showStep(1);  // Reset to the first step
+      } else {
+        alert('Error creating donation: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred.');
+    });
+  });
+
+  function showStep(stepNumber) {
+    document.querySelectorAll('[data-step]').forEach(step => {
+      step.classList.toggle('active', parseInt(step.dataset.step) === stepNumber);
+    });
+  }
+
+  showStep(1);  // Start on the first step
 });
 
-</script>
+  </script>
 
 
 

@@ -81,33 +81,50 @@ class LogoutView(View):
         return redirect('home')
 
 
+import json
+from django.http import JsonResponse
+from django.views import View
+from .models import Donation, Category, Institution
+
 class DonationPageView(View):
     def get(self, request):
+        print('penis')
         categories = Category.objects.all()
         institutions = Institution.objects.all()
         return render(request, 'form.html', {'categories': categories, 'institutions': institutions})
 
     def post(self, request):
-        data = json.loads(request.body)
+        print(request.body)
+        try:
+            data = json.loads(request.body)
+            print(data)
+            categories_ids = data.get('categories', [])
+            bags = data.get('bags', 0)
+            institution_name = data.get('institution', '')
+            address = data.get('address', {})
 
-        categories = Category.objects.filter(id__in=data['categories'])
-        institution = Institution.objects.filter(id__in=data['institutions'])
+            categories = Category.objects.filter(id__in=categories_ids)
+            institution = Institution.objects.get(name=institution_name)
 
-        donation = Donation(
-            quantity=data['bags'],
-            institution=institution,
-            address=data['address']['street'],
-            phone_number=data['address']['number'],
-            city=data['address']['city'],
-            zip_code=data['address']['zipCode'],
-            pick_up_date=data['address']['date'],
-            pick_up_time=data['address']['time'],
-            pick_up_comment=data['address']['comments'],
-        )
-        donation.save()
-        donation.categories.set(categories)
+            donation = Donation(
+                quantity=bags,
+                institution=institution,
+                address=address['street'],
+                phone_number=address['phone'],
+                city=address['city'],
+                zip_code=address['zipCode'],
+                pick_up_date=address['date'],
+                pick_up_time=address['time'],
+                pick_up_comment=address['comments'],
+                user=request.user
+            )
+            donation.save()
+            donation.categories.set(categories)
 
-        return redirect('confirm')
+            return JsonResponse({'status': 'success', 'message': 'Donation created successfully'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
 
 
 class DonationConfirmationPageView(View):
