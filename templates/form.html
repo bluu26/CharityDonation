@@ -161,7 +161,7 @@
             </div>
           </div>
 
-          <!-- STEP 5 -->
+          <!-- STEP 4 -->
           <div data-step="4">
             <h3>Podaj adres oraz termin odbioru rzecz przez kuriera:</h3>
 
@@ -169,7 +169,7 @@
               <div class="form-section--column">
                 <h4>Adres odbioru</h4>
                 <div class="form-group form-group--inline">
-                  <label> Ulica <input type="text" name="address" /> </label>
+                  <label> Ulica <input type="text" name="street" /> </label>
                 </div>
 
                 <div class="form-group form-group--inline">
@@ -178,7 +178,7 @@
 
                 <div class="form-group form-group--inline">
                   <label>
-                    Kod pocztowy <input type="text" name="postcode" />
+                    Kod pocztowy <input type="text" name="zipCode" />
                   </label>
                 </div>
 
@@ -192,7 +192,7 @@
               <div class="form-section--column">
                 <h4>Termin odbioru</h4>
                 <div class="form-group form-group--inline">
-                  <label> Data <input type="date" name="data" /> </label>
+                  <label> Data <input type="date" name="date" /> </label>
                 </div>
 
                 <div class="form-group form-group--inline">
@@ -202,7 +202,7 @@
                 <div class="form-group form-group--inline">
                   <label>
                     Uwagi dla kuriera
-                    <textarea name="more_info" rows="5"></textarea>
+                    <textarea name="comments" rows="5"></textarea>
                   </label>
                 </div>
               </div>
@@ -213,51 +213,52 @@
             </div>
           </div>
 
-          <!-- STEP 6 -->
-          <div data-step="5">
-            <h3>Podsumowanie Twojej darowizny</h3>
-
-            <div class="summary">
-              <div class="form-section">
-                <h4>Oddajesz:</h4>
+        <!-- STEP 5 -->
+        <div data-step="5">
+          <h3>Podsumowanie Twojej darowizny</h3>
+        
+          <div class="summary">
+            <div class="form-section">
+              <h4>Oddajesz:</h4>
+              <ul>
+                <li>
+                  <span class="icon icon-bag"></span>
+                  <span id="summary-bags" class="summary--text"></span>
+                </li>
+                <li>
+                  <span class="icon icon-hand"></span>
+                  <span id="summary-institution" class="summary--text"></span>
+                </li>
+              </ul>
+            </div>
+        
+            <div class="form-section form-section--columns">
+              <div class="form-section--column">
+                <h4>Adres odbioru:</h4>
                 <ul>
-                  <li>
-                    <span class="icon icon-bag"></span>
-                    <span class="summary--text"
-                      >4 worki ubrań w dobrym stanie dla dzieci</span
-                    >
-                  </li>
-
-                  <li>
-                    <span class="icon icon-hand"></span>
-                    <span class="summary--text"
-                      >Dla fundacji "Mam marzenie" w Warszawie</span
-                    >
-                  </li>
+                  <li id="summary-street"></li>
+                  <li id="summary-city"></li>
+                  <li id="summary-zipCode"></li>
+                  <li id="summary-phone"></li>
                 </ul>
               </div>
-
-              <div class="form-section form-section--columns">
-                <div class="form-section--column">
-                  <h4>Adres odbioru:</h4>
-                  <ul>
-                    <li>Prosta 51</li>
-                    <li>Warszawa</li>
-                    <li>99-098</li>
-                    <li>123 456 789</li>
-                  </ul>
-                </div>
-
-                <div class="form-section--column">
-                  <h4>Termin odbioru:</h4>
-                  <ul>
-                    <li>13/12/2018</li>
-                    <li>15:40</li>
-                    <li>Brak uwag</li>
-                  </ul>
-                </div>
+        
+              <div class="form-section--column">
+                <h4>Termin odbioru:</h4>
+                <ul>
+                  <li id="summary-date"></li>
+                  <li id="summary-time"></li>
+                  <li id="summary-comments"></li>
+                </ul>
               </div>
             </div>
+          </div>
+        
+          <div class="form-group form-group--buttons">
+            <button type="button" class="btn prev-step">Wstecz</button>
+            <button type="submit" class="btn">Zatwierdź</button>
+          </div>
+        </div>
 
             <div class="form-group form-group--buttons">
               <button type="button" class="btn prev-step">Wstecz</button>
@@ -305,44 +306,90 @@
     </footer>
 
     <script src="{% static 'js/app.js' %}"></script>
-    <script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
-  const checkboxes = document.querySelectorAll('input[name="categories"]');
-  const institutionDivs = document.querySelectorAll('.form-group[data-categories]');
+  let stepData = {
+    bags: 0,
+    institution: '',
+    address: {
+      street: '',
+      city: '',
+      zipCode: '',
+      phone: '',
+      date: '',
+      time: '',
+      comments: ''
+    }
+  };
 
-  function filterInstitutions() {
-    // Pobieranie zaznaczonych kategorii
-    const selectedCategories = Array.from(checkboxes)
-      .filter(checkbox => checkbox.checked)
-      .map(checkbox => checkbox.value);
+  const nextButtons = document.querySelectorAll('.next-step');
+  const prevButtons = document.querySelectorAll('.prev-step');
 
-    console.log('Selected categories:', selectedCategories);
+  nextButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const currentStep = button.closest('[data-step]');
+      const stepNumber = parseInt(currentStep.dataset.step);
 
-    // Filtrowanie instytucji
-    institutionDivs.forEach(div => {
-      // Pobieranie kategorii z data-categories
-      const categories = div.dataset.categories.split(',').map(cat => cat.trim());
-      console.log('Institution categories:', categories);
+      // Zbieranie danych w zależności od kroku
+      if (stepNumber === 2) {
+        stepData.bags = document.querySelector('input[name="bags"]').value;
+      } else if (stepNumber === 3) {
+        const selectedInstitution = document.querySelector('input[name="organization"]:checked');
+        if (selectedInstitution) {
+          const titleElement = selectedInstitution.parentElement.querySelector('.title');
+          if (titleElement) {
+            stepData.institution = titleElement.innerText;
+          }
+        }
+      } else if (stepNumber === 4) {
+        stepData.address.street = document.querySelector('input[name="street"]').value;
+        stepData.address.city = document.querySelector('input[name="city"]').value;
+        stepData.address.zipCode = document.querySelector('input[name="zipCode"]').value;
+        stepData.address.phone = document.querySelector('input[name="phone"]').value;
+        stepData.address.date = document.querySelector('input[name="date"]').value;
+        stepData.address.time = document.querySelector('input[name="time"]').value;
+        stepData.address.comments = document.querySelector('textarea[name="comments"]').value;
+      }
 
-      // Sprawdzanie widoczności
-      const isVisible = selectedCategories.length === 0 || categories.some(category => selectedCategories.includes(category));
-      console.log('Is visible:', isVisible);
-      div.style.display = isVisible ? 'block' : 'none';
+      // Przejście do następnego kroku
+      currentStep.classList.remove('active');
+      const nextStep = document.querySelector(`[data-step="${stepNumber + 1}"]`);
+      if (nextStep) {
+        nextStep.classList.add('active');
+      }
+
+      // Wyświetlanie podsumowania w kroku 5
+      if (stepNumber === 4) {
+        document.getElementById('summary-bags').innerText = `${stepData.bags} worki ubrań w dobrym stanie dla dzieci`;
+        document.getElementById('summary-institution').innerText = `Dla fundacji "${stepData.institution}"`;
+        document.getElementById('summary-street').innerText = stepData.address.street;
+        document.getElementById('summary-city').innerText = stepData.address.city;
+        document.getElementById('summary-zipCode').innerText = stepData.address.zipCode;
+        document.getElementById('summary-phone').innerText = stepData.address.phone;
+        document.getElementById('summary-date').innerText = stepData.address.date;
+        document.getElementById('summary-time').innerText = stepData.address.time;
+        document.getElementById('summary-comments').innerText = stepData.address.comments || 'Brak uwag';
+      }
     });
-  }
-
-  // Nasłuchiwanie zmian w checkboxach
-  checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', filterInstitutions);
   });
 
-  // Inicjalizowanie filtra przy załadowaniu strony
-  filterInstitutions();
+  prevButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const currentStep = button.closest('[data-step]');
+      const stepNumber = parseInt(currentStep.dataset.step);
+
+      // Przejście do poprzedniego kroku
+      currentStep.classList.remove('active');
+      const prevStep = document.querySelector(`[data-step="${stepNumber - 1}"]`);
+      if (prevStep) {
+        prevStep.classList.add('active');
+      }
+    });
+  });
 });
+</script>
 
 
 
-
-    </script>
   </body>
 </html>
