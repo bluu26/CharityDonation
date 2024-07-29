@@ -1,6 +1,6 @@
 import json
 
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Sum
@@ -81,14 +81,8 @@ class LogoutView(View):
         return redirect('home')
 
 
-import json
-from django.http import JsonResponse
-from django.views import View
-from .models import Donation, Category, Institution
-
 class DonationPageView(View):
     def get(self, request):
-        print('penis')
         categories = Category.objects.all()
         institutions = Institution.objects.all()
         return render(request, 'form.html', {'categories': categories, 'institutions': institutions})
@@ -124,7 +118,6 @@ class DonationPageView(View):
             return JsonResponse({'status': 'success', 'message': 'Donation created successfully'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-
 
 
 class DonationConfirmationPageView(View):
@@ -179,5 +172,21 @@ class PasswordConfView(View):
 
 class ChangePassView(View):
     def get(self, request):
-        user = request.user
         return render(request, 'password_change.html')
+
+    def post(self, request):
+        curr_pass = request.POST.get('curr_pass')
+        new_pass = request.POST.get('new_pass')
+        conf_pass = request.POST.get('conf_pass')
+        print(f" 1{curr_pass}, 2{new_pass}, 3{conf_pass}")
+        if new_pass != conf_pass:
+            return render(request, 'password_change.html', {'error': 'Nowe hasła nie są zgodne.'})
+
+        user = request.user
+        if user.check_password(curr_pass):
+            user.set_password(new_pass)
+            user.save()
+            update_session_auth_hash(request, user)
+            return redirect('user_edit')
+        else:
+            return render(request, 'password_change.html', {'error': 'Błędne hasło.'})
