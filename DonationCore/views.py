@@ -1,7 +1,10 @@
+import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Sum
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -20,7 +23,7 @@ class LandingPageView(View):
         user = request.user
 
         if request.user.is_authenticated:
-            return render(request, 'form.html', {'total_quantity': total_quantity,
+            return render(request, 'index.html', {'total_quantity': total_quantity,
                                                  'institutions_number': institutions_number,
                                                  'institutions': institutions,
                                                  'page_obj': page_obj})
@@ -78,8 +81,52 @@ class LogoutView(View):
         return redirect('home')
 
 
+import json
+from django.http import JsonResponse
+from django.views import View
+from .models import Donation, Category, Institution
+
 class DonationPageView(View):
     def get(self, request):
+        print('penis')
         categories = Category.objects.all()
         institutions = Institution.objects.all()
         return render(request, 'form.html', {'categories': categories, 'institutions': institutions})
+
+    def post(self, request):
+        print(request.body)
+        try:
+            data = json.loads(request.body)
+            print(data)
+            categories_ids = data.get('categories', [])
+            bags = data.get('bags', 0)
+            institution_name = data.get('institution', '')
+            address = data.get('address', {})
+
+            categories = Category.objects.filter(id__in=categories_ids)
+            institution = Institution.objects.get(name=institution_name)
+
+            donation = Donation(
+                quantity=bags,
+                institution=institution,
+                address=address['street'],
+                phone_number=address['phone'],
+                city=address['city'],
+                zip_code=address['zipCode'],
+                pick_up_date=address['date'],
+                pick_up_time=address['time'],
+                pick_up_comment=address['comments'],
+                user=request.user
+            )
+            donation.save()
+            donation.categories.set(categories)
+
+            return JsonResponse({'status': 'success', 'message': 'Donation created successfully'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+
+class DonationConfirmationPageView(View):
+    def get(self, request):
+        return render(request, 'form-confirmation.html')

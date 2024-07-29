@@ -257,4 +257,37 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const checkboxes = document.querySelectorAll('input[name="categories"]');
+  const institutionDivs = document.querySelectorAll('.form-group[data-categories]');
+
+  function filterInstitutions() {
+    // Pobieranie zaznaczonych kategorii
+    const selectedCategories = Array.from(checkboxes)
+      .filter(checkbox => checkbox.checked)
+      .map(checkbox => checkbox.value);
+
+    console.log('Selected categories:', selectedCategories);
+
+    // Filtrowanie instytucji
+    institutionDivs.forEach(div => {
+      // Pobieranie kategorii z data-categories
+      const categories = div.dataset.categories.split(',').map(cat => cat.trim());
+      console.log('Institution categories:', categories);
+
+      // Sprawdzanie widoczności
+      const isVisible = selectedCategories.length === 0 || categories.some(category => selectedCategories.includes(category));
+      console.log('Is visible:', isVisible);
+      div.style.display = isVisible ? 'block' : 'none';
+    });
+  }
+
+  // Nasłuchiwanie zmian w checkboxach
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', filterInstitutions);
+  });
+
+  // Inicjalizowanie filtra przy załadowaniu strony
+  filterInstitutions();
+});
 
