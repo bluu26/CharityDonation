@@ -23,7 +23,7 @@ class LandingPageView(View):
         user = request.user
 
         if request.user.is_authenticated:
-            return render(request, 'form.html', {'total_quantity': total_quantity,
+            return render(request, 'index.html', {'total_quantity': total_quantity,
                                                  'institutions_number': institutions_number,
                                                  'institutions': institutions,
                                                  'page_obj': page_obj})
