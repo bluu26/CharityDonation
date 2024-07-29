@@ -137,7 +137,47 @@ class UserPageView(View):
         user = request.user
         return render(request, 'user_temp.html')
 
+
+class UserEditPageView(View):
+    def get(self, request):
+        user = request.user
+        return render(request, 'user_edit.html', {'user': user})
+
+    def post(self, request):
+        user = request.user
+        username = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        print(f"Received POST data - first_name: {first_name}, last_name: {last_name}, email: {email}")
+        if not first_name or not last_name or not email:
+            return render(request, 'user_edit.html', {'user': user, 'error': 'Wszystkie pola muszą być wypełnione.'})
+
+        # Aktualizacja danych użytkownika
+        user.username = username
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.save()
+
+        return redirect('user')
+
+
 class PasswordConfView(View):
     def get(self, request):
         user = request.user
         return render(request, 'password_conf.html')
+
+    def post(self, request):
+        password = request.POST.get('password')
+        user = authenticate(username=request.user.username, password=password)
+        if user is not None:
+            return redirect('user_edit')
+        else:
+            return render(request, 'password_conf.html', {'error': 'Błędne hasło.'})
+
+
+class ChangePassView(View):
+    def get(self, request):
+        user = request.user
+        return render(request, 'password_change.html')
