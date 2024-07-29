@@ -10,5 +10,7 @@ urlpatterns = [
     path('register/', views.RegisterPageView.as_view(), name='register'),
     path('donation/', views.DonationPageView.as_view(), name='donation'),
     path('confirm/', views.DonationConfirmationPageView.as_view(), name='confirm'),
+    path('user/', views.UserPageView.as_view(), name='user'),
+    path('pass/', views.PasswordConfView.as_view(), name='password'),
 
 ]

@@ -130,3 +130,14 @@ class DonationPageView(View):
 class DonationConfirmationPageView(View):
     def get(self, request):
         return render(request, 'form-confirmation.html')
+
+
+class UserPageView(View):
+    def get(self, request):
+        user = request.user
+        return render(request, 'user_temp.html')
+
+class PasswordConfView(View):
+    def get(self, request):
+        user = request.user
+        return render(request, 'password_conf.html')

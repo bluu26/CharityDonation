@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="login2-page">
+    <h2>Panel użytkownika {{ user.first_name }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="user-div">
+            <p><b>Imie:</b> {{ user.first_name }}</p>
+        </div>
+        <div class="user-div">
+            <p><b>Nazwisko:</b> {{ user.last_name }}</p>
+        </div>
+        <div class="user-div">
+            <p><b>Adres email:</b> {{ user.email }}</p>
+        </div>
+
+        <div class="form-group form-group--buttons">
+            <a href="{% url 'register' %}" class="btn btn--without-border">Edycja danych</a>      
+{#            <button class="btn" type="submit">Zapisz</button> #}
+        </div>
+    </form>
+</section>
+{% endblock %}
+
+{% block additional_js %}
+
+{% endblock %}
