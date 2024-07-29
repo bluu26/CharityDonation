@@ -16,8 +16,8 @@
               <li class="logged-user">
                 Witaj {{ user.first_name }}
                 <ul class="dropdown">
-                  <li><a href="#">Profil</a></li>
-                  <li><a href="#">Ustawienia</a></li>
+                  <li><a href="/user/">Profil</a></li>
+                  <li><a href="/pass/">Ustawienia</a></li>
                   <li><a href="{% url 'logout' %}">Wyloguj</a></li>
                 </ul>
               </li>
@@ -93,7 +93,7 @@
 
 <form id="donation-form" method="POST">
     {% csrf_token %}
-    
+
     <!-- STEP 1 -->
     <div data-step="1" class="active">
         <h3>Zaznacz, co chcesz oddać:</h3>
@@ -110,7 +110,7 @@
             <button type="button" class="btn next-step">Dalej</button>
         </div>
     </div>
-    
+
     <!-- STEP 2 -->
     <div data-step="2">
         <h3>Podaj liczbę 60l worków, w które spakowałeś/aś rzeczy:</h3>
@@ -125,7 +125,7 @@
             <button type="button" class="btn next-step">Dalej</button>
         </div>
     </div>
-    
+
     <!-- STEP 3 -->
     <div data-step="3">
         <h3>Wybierz organizacje, której chcesz pomóc:</h3>
@@ -151,7 +151,7 @@
             <button type="button" class="btn next-step">Dalej</button>
         </div>
     </div>
-    
+
     <!-- STEP 4 -->
     <div data-step="4">
         <h3>Podaj adres oraz termin odbioru rzeczy przez kuriera:</h3>
@@ -189,7 +189,7 @@
             <button type="button" class="btn next-step">Dalej</button>
         </div>
     </div>
-    
+
     <!-- STEP 5 -->
     <div data-step="5">
         <h3>Podsumowanie Twojej darowizny</h3>
@@ -354,8 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    console.log('Submitting form with data:', stepData); // Dodajemy logowanie danych
-
+    // Wysłanie danych formularza
     fetch('{% url "donation" %}', {
       method: 'POST',
       headers: {
@@ -368,8 +367,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       if (data.status === 'success') {
         alert('Donation created successfully!');
-        form.reset();
-        showStep(1);  // Reset to the first step
+        // Przekierowanie po pomyślnym dodaniu
+        window.location.href = '{% url "confirm" %}'; // Zmień "confirm" na właściwy URL
       } else {
         alert('Error creating donation: ' + data.message);
       }
@@ -388,8 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   showStep(1);  // Start on the first step
 });
-
-  </script>
+</script>
 
 
 

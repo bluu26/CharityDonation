@@ -5,6 +5,9 @@ from django.db import models
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 institutions = [
     ('1', 'fundacja'),
@@ -36,3 +39,5 @@ class Donation(models.Model):
     pick_up_comment = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 
+    def __str__(self):
+        return f'{self.institution.name, self.address}'

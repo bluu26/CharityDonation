@@ -1,6 +1,6 @@
 import json
 
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Sum
@@ -81,14 +81,8 @@ class LogoutView(View):
         return redirect('home')
 
 
-import json
-from django.http import JsonResponse
-from django.views import View
-from .models import Donation, Category, Institution
-
 class DonationPageView(View):
     def get(self, request):
-        print('penis')
         categories = Category.objects.all()
         institutions = Institution.objects.all()
         return render(request, 'form.html', {'categories': categories, 'institutions': institutions})
@@ -126,7 +120,74 @@ class DonationPageView(View):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
-
 class DonationConfirmationPageView(View):
     def get(self, request):
         return render(request, 'form-confirmation.html')
+
+
+class UserPageView(View):
+    def get(self, request):
+        user = request.user
+        donations = Donation.objects.filter(user=user)
+        return render(request, 'user_temp.html', {'donations': donations})
+
+
+class UserEditPageView(View):
+    def get(self, request):
+        user = request.user
+        return render(request, 'user_edit.html', {'user': user})
+
+    def post(self, request):
+        user = request.user
+        username = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        print(f"Received POST data - first_name: {first_name}, last_name: {last_name}, email: {email}")
+        if not first_name or not last_name or not email:
+            return render(request, 'user_edit.html', {'user': user, 'error': 'Wszystkie pola muszą być wypełnione.'})
+
+        # Aktualizacja danych użytkownika
+        user.username = username
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.save()
+
+        return redirect('user')
+
+
+class PasswordConfView(View):
+    def get(self, request):
+        user = request.user
+        return render(request, 'password_conf.html')
+
+    def post(self, request):
+        password = request.POST.get('password')
+        user = authenticate(username=request.user.username, password=password)
+        if user is not None:
+            return redirect('user_edit')
+        else:
+            return render(request, 'password_conf.html', {'error': 'Błędne hasło.'})
+
+
+class ChangePassView(View):
+    def get(self, request):
+        return render(request, 'password_change.html')
+
+    def post(self, request):
+        curr_pass = request.POST.get('curr_pass')
+        new_pass = request.POST.get('new_pass')
+        conf_pass = request.POST.get('conf_pass')
+        print(f" 1{curr_pass}, 2{new_pass}, 3{conf_pass}")
+        if new_pass != conf_pass:
+            return render(request, 'password_change.html', {'error': 'Nowe hasła nie są zgodne.'})
+
+        user = request.user
+        if user.check_password(curr_pass):
+            user.set_password(new_pass)
+            user.save()
+            update_session_auth_hash(request, user)
+            return redirect('user_edit')
+        else:
+            return render(request, 'password_change.html', {'error': 'Błędne hasło.'})
