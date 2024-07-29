@@ -18,10 +18,35 @@
         </div>
 
         <div class="form-group form-group--buttons">
-            <a href="{% url 'password' %}" class="btn btn--without-border">Edycja danych</a>      
+            <a href="{% url 'password' %}" class="btn btn--without-border">Edycja danych</a>
 {#            <button class="btn" type="submit">Zapisz</button> #}
         </div>
     </form>
+</section>
+    <section class="user-page">
+    <h2>Donacje użytkownika {{ user.first_name }}</h2>
+
+    {% if donations %}
+        <ul class="donation-list">
+            {% for donation in donations %}
+                <li>
+                    <p><strong>Wielkość darowizny:</strong> {{ donation.quantity }} worki</p>
+                    <p><strong>Kategorie:</strong> {{ donation.categories.all|join:", " }}</p>
+                    <p><strong>Instytucja:</strong> {{ donation.institution.name }}</p>
+                    <p><strong>Adres:</strong> {{ donation.address }}</p>
+                    <p><strong>Numer telefonu:</strong> {{ donation.phone_number }}</p>
+                    <p><strong>Miasto:</strong> {{ donation.city }}</p>
+                    <p><strong>Kod pocztowy:</strong> {{ donation.zip_code }}</p>
+                    <p><strong>Data odbioru:</strong> {{ donation.pick_up_date }}</p>
+                    <p><strong>Godzina odbioru:</strong> {{ donation.pick_up_time }}</p>
+                    <p><strong>Uwagi:</strong> {{ donation.pick_up_comment }}</p>
+                ----------------------------------------
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Brak donacji dla tego użytkownika.</p>
+    {% endif %}
 </section>
 {% endblock %}
 

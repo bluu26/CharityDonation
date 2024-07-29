@@ -128,7 +128,8 @@ class DonationConfirmationPageView(View):
 class UserPageView(View):
     def get(self, request):
         user = request.user
-        return render(request, 'user_temp.html')
+        donations = Donation.objects.filter(user=user)
+        return render(request, 'user_temp.html', {'donations': donations})
 
 
 class UserEditPageView(View):
